@@ -1,74 +1,39 @@
+import streamlit as st
 import os
-import winsound
 
-def play_music(folder, song_name):
-    file_path = os.path.join(folder, song_name)
+# Page settings
+st.set_page_config(
+    page_title="WAV Music Player",
+    page_icon="🎵",
+    layout="centered"
+)
 
-    if not os.path.exists(file_path):
-        print("File not found")
-        return
+st.title("🎵 WAV Music Player")
+st.write("Select a WAV file and play it directly in your browser.")
 
-    print(f"\nNow playing: {song_name}")
-    print("Commands: [S]top  [Q]uit")
+# Music folder
+music_folder = "music"
 
-    # ▶️ PLAY ASYNC (NON-BLOCKING)
-    winsound.PlaySound(
-        file_path,
-        winsound.SND_FILENAME | winsound.SND_ASYNC
-    )
+# Check folder
+if not os.path.isdir(music_folder):
+    st.error("❌ 'music' folder not found")
+    st.stop()
 
-    while True:
-        command = input("> ").upper()
+# Load songs
+songs = [f for f in os.listdir(music_folder) if f.lower().endswith(".wav")]
 
-        if command == "S":
-            winsound.PlaySound(None, winsound.SND_PURGE)
-            print("Stopped")
-            return
+if not songs:
+    st.warning("⚠️ No WAV files found in the music folder")
+    st.stop()
 
-        elif command == "Q":
-            winsound.PlaySound(None, winsound.SND_PURGE)
-            print("Exit player")
-            exit()
+# Song selector
+selected_song = st.selectbox("🎧 Choose a song", songs)
 
-        else:
-            print("Invalid command")
+file_path = os.path.join(music_folder, selected_song)
 
+# Play audio
+with open(file_path, "rb") as audio_file:
+    st.audio(audio_file.read(), format="audio/wav")
 
-def main():
-    folder = "music"
+st.success("▶️ Playing in browser")
 
-    if not os.path.isdir(folder):
-        print(f"Folder '{folder}' not found")
-        return
-
-    songs = [f for f in os.listdir(folder) if f.endswith(".wav")]
-
-    if not songs:
-        print("No WAV files found")
-        return
-
-    while True:
-        print("\n********** WAV PLAYER **********")
-        for i, song in enumerate(songs, start=1):
-            print(f"{i}. {song}")
-
-        choice = input("\nEnter song number or Q to quit: ")
-
-        if choice.upper() == "Q":
-            print("Byeeeeee 👋")
-            break
-
-        if not choice.isdigit():
-            print("Enter a valid number")
-            continue
-
-        index = int(choice) - 1
-
-        if 0 <= index < len(songs):
-            play_music(folder, songs[index])
-        else:
-            print("Invalid choice")
-
-
-if __name__ == "__main__":
-    main()
