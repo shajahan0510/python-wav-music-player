@@ -27,124 +27,133 @@ if 'start_time' not in st.session_state:
     st.session_state.start_time = 0
 if 'user_interacted' not in st.session_state:
     st.session_state.user_interacted = False
+# NEW: User selected accent color (Default is Neon Blue)
+if 'accent_color' not in st.session_state:
+    st.session_state.accent_color = "#00d2ff"
 
-# ---------------- ADVANCED CSS ----------------
-st.markdown("""
+# ---------------- DYNAMIC CSS ----------------
+# We inject the user's color choice into CSS variables
+accent = st.session_state.accent_color
+
+st.markdown(f"""
 <style>
+    :root {{
+        --primary-color: {accent};
+        --primary-dim: {accent}33; /* 20% opacity */
+    }}
+
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap');
     
-    * { font-family: 'Montserrat', sans-serif; }
+    * {{ font-family: 'Montserrat', sans-serif; }}
     
-    /* --- BACKGROUND ANIMATIONS --- */
-    body {
-        background: #0f0c29;
+    /* --- BACKGROUND ANIMATIONS (BLACK THEME) --- */
+    body {{
+        background: #000000; /* PURE BLACK */
         min-height: 100vh;
         color: white;
         margin: 0;
         overflow-x: hidden;
-    }
+    }}
     
-    /* The Deep Gradient */
-    .bg-gradient {
+    .bg-gradient {{
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        background: #000000; /* BLACK */
         z-index: -3;
-    }
+    }}
 
-    /* Floating Orbs */
-    .blob {
+    /* Floating Orbs - Adapted for Black */
+    .blob {{
         position: absolute;
         border-radius: 50%;
-        filter: blur(80px);
+        filter: blur(90px);
         z-index: -2;
-        opacity: 0.6;
+        opacity: 0.4;
         animation: floatBlob 20s infinite ease-in-out alternate;
-    }
+    }}
     
-    .blob-1 {
-        width: 500px; height: 500px;
-        background: radial-gradient(circle, #00d2ff, transparent);
-        top: -100px; left: -100px;
+    .blob-1 {{
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, var(--primary-color), transparent);
+        top: -150px; left: -150px;
         animation-duration: 25s;
-    }
+    }}
     
-    .blob-2 {
-        width: 400px; height: 400px;
-        background: radial-gradient(circle, #764ba2, transparent);
-        bottom: -50px; right: -50px;
+    .blob-2 {{
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, #4a00e0, transparent);
+        bottom: -100px; right: -100px;
         animation-duration: 30s;
         animation-delay: -5s;
-    }
+    }}
 
-    @keyframes floatBlob {
-        0% { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(50px, 50px) scale(1.1); }
-    }
+    @keyframes floatBlob {{
+        0% {{ transform: translate(0, 0) scale(1); }}
+        100% {{ transform: translate(60px, 60px) scale(1.2); }}
+    }}
 
     /* --- START SCREEN --- */
-    .start-screen-container {
+    .start-screen-container {{
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         min-height: 70vh; text-align: center;
-    }
-    .start-title {
+    }}
+    .start-title {{
         font-family: 'Rajdhani', sans-serif;
         font-size: 72px; font-weight: 700;
-        background: linear-gradient(to right, #00d2ff, #ffffff, #00d2ff);
+        background: linear-gradient(to right, var(--primary-color), #ffffff, var(--primary-color));
         background-size: 200% auto;
         -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
         animation: shineText 5s linear infinite; margin-bottom: 0;
-    }
+    }}
 
-    @keyframes shineText { to { background-position: 200% center; } }
+    @keyframes shineText {{ to {{ background-position: 200% center; }} }}
     
-    button[data-testid="baseButton-primary"] {
-        background: rgba(255, 255, 255, 0.03);
+    button[data-testid="baseButton-primary"] {{
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(0, 210, 255, 0.3);
+        border: 1px solid var(--primary-color);
         border-radius: 4px;
         width: 100%;
         padding: 20px;
-        color: #00d2ff;
+        color: var(--primary-color);
         font-family: 'Rajdhani', sans-serif;
         font-weight: 700;
         letter-spacing: 4px;
         text-transform: uppercase;
         font-size: 18px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         transition: all 0.3s ease;
-    }
+    }}
 
-    button[data-testid="baseButton-primary"]:hover {
-        background: rgba(0, 210, 255, 0.1);
-        box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
-        border-color: #00d2ff;
+    button[data-testid="baseButton-primary"]:hover {{
+        background: var(--primary-dim);
+        box-shadow: 0 0 30px var(--primary-color);
+        border-color: var(--primary-color);
         transform: scale(1.02);
-    }
+    }}
 
-    /* --- GLASS CARDS --- */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.02);
+    /* --- GLASS CARDS (BLACK THEME) --- */
+    .glass-card {{
+        background: rgba(20, 20, 20, 0.6); /* Darker glass */
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 30px;
         padding: 40px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
         margin-bottom: 30px;
-    }
+    }}
     
-    /* --- CONTROLS DECK (Stylish Buttons) --- */
-    .controls-deck {
+    /* --- CONTROLS DECK --- */
+    .controls-deck {{
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 25px;
         margin: 30px 0;
         position: relative;
-    }
+    }}
 
-    /* The Neumorphic/Glass Buttons */
-    .stButton > button {
+    .stButton > button {{
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.8);
@@ -154,110 +163,114 @@ st.markdown("""
         height: 60px;
         font-size: 24px;
         box-shadow: 
-            5px 5px 10px rgba(0, 0, 0, 0.2),
-            -5px -5px 10px rgba(255, 255, 255, 0.05);
-    }
+            5px 5px 10px rgba(0, 0, 0, 0.5),
+            -5px -5px 10px rgba(255, 255, 255, 0.02);
+    }}
     
-    .stButton > button:hover {
-        background: rgba(255, 255, 255, 0.1);
+    .stButton > button:hover {{
+        background: var(--primary-dim);
         color: white;
         transform: translateY(-5px);
-        box-shadow: 0 0 15px rgba(0, 210, 255, 0.5), inset 0 0 10px rgba(0, 210, 255, 0.2);
-        border-color: rgba(0, 210, 255, 0.5);
-    }
+        box-shadow: 0 0 15px var(--primary-color);
+        border-color: var(--primary-color);
+    }}
 
     /* THE BIG PLAY BUTTON */
-    div:has(> button[key="btn_play"]) > button {
+    div:has(> button[key="btn_play"]) > button {{
         width: 90px; height: 90px;
         font-size: 32px;
-        background: linear-gradient(135deg, #00d2ff, #0072ff);
+        background: linear-gradient(135deg, var(--primary-color), #000000);
         border: none;
         color: white;
         position: relative;
         z-index: 2;
         
-        /* Double Halo Effect */
         box-shadow: 
-            0 0 0 6px rgba(255, 255, 255, 0.1),
-            0 0 30px rgba(0, 210, 255, 0.6);
+            0 0 0 6px rgba(255, 255, 255, 0.05),
+            0 0 30px var(--primary-color);
         animation: pulsePlay 2s infinite ease-in-out;
-    }
+    }}
 
-    div:has(> button[key="btn_play"]) > button:hover {
+    div:has(> button[key="btn_play"]) > button:hover {{
         transform: scale(1.1);
         box-shadow: 
-            0 0 0 10px rgba(255, 255, 255, 0.2),
-            0 0 50px rgba(0, 210, 255, 0.8);
-    }
+            0 0 0 10px rgba(255, 255, 255, 0.1),
+            0 0 50px var(--primary-color);
+    }}
 
-    @keyframes pulsePlay {
-        0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
-        70% { box-shadow: 0 0 0 20px rgba(0, 210, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
-    }
+    @keyframes pulsePlay {{
+        0% {{ box-shadow: 0 0 0 0 var(--primary-color); }}
+        70% {{ box-shadow: 0 0 0 20px rgba(0,0,0,0); }}
+        100% {{ box-shadow: 0 0 0 0 rgba(0,0,0,0); }}
+    }}
 
     /* --- SONG INFO --- */
-    .song-title {
+    .song-title {{
         font-family: 'Montserrat', sans-serif;
         font-weight: 700;
         font-size: 28px;
         background: -webkit-linear-gradient(#fff, #aaa);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         margin-bottom: 5px;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }}
 
     /* --- VISUALIZER --- */
-    .visualizer-container {
+    .visualizer-container {{
         height: 80px; display: flex; align-items: flex-end; justify-content: center;
-        gap: 5px; margin: 30px 0; padding: 20px; background: rgba(0, 0, 0, 0.2); 
+        gap: 5px; margin: 30px 0; padding: 20px; background: rgba(0, 0, 0, 0.4); 
         border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
-    }
-    .visualizer-bar {
-        width: 6px; background: linear-gradient(to top, #00d2ff, #ffffff);
+    }}
+    .visualizer-bar {{
+        width: 6px; background: linear-gradient(to top, var(--primary-color), #ffffff);
         border-radius: 3px; animation: bounce 1s ease-in-out infinite;
-        box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
-    }
-    .visualizer-container.paused .visualizer-bar { animation-play-state: paused; height: 5px !important; opacity: 0.3; }
-    @keyframes bounce { 0%, 100% { height: 10px; } 50% { height: var(--bar-height); } }
+        box-shadow: 0 0 10px var(--primary-color);
+    }}
+    .visualizer-container.paused .visualizer-bar {{ animation-play-state: paused; height: 5px !important; opacity: 0.3; }}
+    @keyframes bounce {{ 0%, 100% {{ height: 10px; }} 50% {{ height: var(--bar-height); }} }}
 
     /* --- MODE SELECTOR --- */
-    div[data-testid="stRadio"] { display: flex; justify-content: center; margin-bottom: 30px; }
-    div[data-testid="stRadio"] > div[role="radiogroup"] {
-        display: flex; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+    div[data-testid="stRadio"] {{ display: flex; justify-content: center; margin-bottom: 30px; }}
+    div[data-testid="stRadio"] > div[role="radiogroup"] {{
+        display: flex; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
         border-radius: 12px; padding: 5px; gap: 5px; width: 100%; max-width: 400px;
-    }
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+    }}
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label {{
         flex: 1; border-radius: 8px; cursor: pointer; margin: 0; height: 45px;
-    }
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input { display: none; }
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label > div {
+    }}
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input {{ display: none; }}
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label > div {{
         color: rgba(255,255,255,0.5); font-weight: 600; font-size: 14px;
-    }
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input:checked + div {
-        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-        color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
+    }}
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input:checked + div {{
+        background: linear-gradient(135deg, var(--primary-color), #000000);
+        color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }}
 
     /* --- PLAYLIST --- */
-    .playlist-item {
-        padding: 15px; margin: 10px 0; background: rgba(255, 255, 255, 0.03);
+    .playlist-item {{
+        padding: 15px; margin: 10px 0; background: rgba(255, 255, 255, 0.02);
         border-radius: 15px; border: 1px solid transparent; transition: all 0.3s;
         display: flex; align-items: center; justify-content: space-between;
-    }
-    .playlist-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(5px); }
-    .playlist-item.active {
-        background: linear-gradient(90deg, rgba(0, 210, 255, 0.1), rgba(0,0,0,0));
-        border-left: 4px solid #00d2ff;
-    }
+    }}
+    .playlist-item:hover {{ background: rgba(255, 255, 255, 0.05); transform: translateX(5px); }}
+    .playlist-item.active {{
+        background: linear-gradient(90deg, var(--primary-dim), rgba(0,0,0,0));
+        border-left: 4px solid var(--primary-color);
+    }}
     
     /* Hide ugly audio element */
-    .stAudio { display: none; }
+    .stAudio {{ display: none; }}
+    
+    /* COLOR PICKER STYLING */
+    div[data-testid="stColorPicker"] > div > label > div {{
+        background: black !important;
+        color: white !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- INJECT BACKGROUND ORBS ----------------
-# This creates the floating animation effects
 st.markdown("""
 <div class="bg-gradient"></div>
 <div class="blob blob-1"></div>
@@ -286,6 +299,14 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# ---------------- THEME SETTINGS (USER CHOICE COLOR) ----------------
+with st.expander("🎨 Theme Settings"):
+    st.markdown("<p style='opacity:0.7; font-size:14px;'>Choose your accent color for the interface:</p>", unsafe_allow_html=True)
+    new_color = st.color_picker("Accent Color", st.session_state.accent_color)
+    if new_color != st.session_state.accent_color:
+        st.session_state.accent_color = new_color
+        st.rerun()
+
 # ---------------- MODE SELECTOR ----------------
 mode = st.radio(
     "",
@@ -300,7 +321,7 @@ uploaded_files = None
 if mode == "📤 Upload":
     st.markdown("""
     <div style="text-align: center; padding: 40px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 20px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
-        <span style="font-size: 40px; filter: drop-shadow(0 0 10px rgba(0,210,255,0.5));">📂</span>
+        <span style="font-size: 40px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));">📂</span>
         <p style="margin: 15px 0 0 0; opacity: 0.6; letter-spacing: 1px;">UPLOAD YOUR TRACKS</p>
     </div>
     """, unsafe_allow_html=True)
@@ -352,8 +373,8 @@ if st.session_state.playlist:
         art_state = "" if st.session_state.is_playing else "paused"
         st.markdown(f"""
         <div style="position: relative; width: 260px; height: 260px; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #764ba2, transparent); opacity: 0.5; filter: blur(30px);"></div>
-            <div style="position: relative; z-index: 2; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #1e1e2f, #0f0c29); display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); animation: rotate 30s linear infinite;" class="album-art {art_state}">
+            <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #333, transparent); opacity: 0.5; filter: blur(30px);"></div>
+            <div style="position: relative; z-index: 2; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #222, #000); display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); animation: rotate 30s linear infinite;" class="album-art {art_state}">
                 🎵
             </div>
         </div>
