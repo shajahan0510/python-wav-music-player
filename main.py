@@ -18,7 +18,7 @@ if 'is_playing' not in st.session_state:
 if 'volume' not in st.session_state:
     st.session_state.volume = 0.7
 if 'playlist' not in st.session_state:
-    st.session_state.playlist = []
+    st.session_state.playlist = [] 
 if 'shuffle' not in st.session_state:
     st.session_state.shuffle = False
 if 'repeat' not in st.session_state:
@@ -28,200 +28,261 @@ if 'start_time' not in st.session_state:
 if 'user_interacted' not in st.session_state:
     st.session_state.user_interacted = False
 
-# ---------------- CSS ----------------
+# ---------------- ADVANCED CSS ----------------
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap');
     
-    * { font-family: 'Poppins', sans-serif; }
+    * { font-family: 'Montserrat', sans-serif; }
     
+    /* --- BACKGROUND ANIMATIONS --- */
     body {
-        background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        background: #0f0c29;
         min-height: 100vh;
         color: white;
         margin: 0;
+        overflow-x: hidden;
     }
     
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    /* The Deep Gradient */
+    .bg-gradient {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        z-index: -3;
+    }
+
+    /* Floating Orbs */
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: -2;
+        opacity: 0.6;
+        animation: floatBlob 20s infinite ease-in-out alternate;
     }
     
+    .blob-1 {
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, #00d2ff, transparent);
+        top: -100px; left: -100px;
+        animation-duration: 25s;
+    }
+    
+    .blob-2 {
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, #764ba2, transparent);
+        bottom: -50px; right: -50px;
+        animation-duration: 30s;
+        animation-delay: -5s;
+    }
+
+    @keyframes floatBlob {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(50px, 50px) scale(1.1); }
+    }
+
     /* --- START SCREEN --- */
     .start-screen-container {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        min-height: 60vh; text-align: center;
+        min-height: 70vh; text-align: center;
     }
     .start-title {
-        font-size: 52px; font-weight: 800;
-        background: linear-gradient(to right, #fff, #00d2ff);
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 72px; font-weight: 700;
+        background: linear-gradient(to right, #00d2ff, #ffffff, #00d2ff);
+        background-size: 200% auto;
         -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-        margin-bottom: 10px; letter-spacing: 2px;
+        animation: shineText 5s linear infinite; margin-bottom: 0;
     }
+
+    @keyframes shineText { to { background-position: 200% center; } }
     
-    /* --- NEW STYLE: FUTURISTIC GLASS BUTTON --- */
     button[data-testid="baseButton-primary"] {
-        /* Glass Effect */
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        
-        /* Border */
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        
-        /* Shape & Layout */
-        border-radius: 8px; /* More square/techy than round */
+        border: 1px solid rgba(0, 210, 255, 0.3);
+        border-radius: 4px;
         width: 100%;
-        padding: 18px;
-        
-        /* Typography */
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 600;
-        letter-spacing: 3px;
+        padding: 20px;
+        color: #00d2ff;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        letter-spacing: 4px;
         text-transform: uppercase;
-        font-size: 16px;
-        
-        /* Shadow & Transition */
-        box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        position: relative;
-        overflow: hidden;
+        font-size: 18px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
     }
 
-    /* Hover Effect */
     button[data-testid="baseButton-primary"]:hover {
-        background: rgba(0, 210, 255, 0.15);
+        background: rgba(0, 210, 255, 0.1);
+        box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
         border-color: #00d2ff;
-        box-shadow: 0 0 25px rgba(0, 210, 255, 0.5), inset 0 0 10px rgba(0, 210, 255, 0.2);
-        letter-spacing: 5px; /* Letters spread out */
-        transform: translateY(-3px);
+        transform: scale(1.02);
     }
 
-    /* Click Effect */
-    button[data-testid="baseButton-primary"]:active {
-        transform: scale(0.98);
-    }
-
-    /* --- MODE SELECTOR (PILL SHAPE) --- */
-    div[data-testid="stRadio"] {
-        display: flex; justify-content: center; margin-bottom: 30px;
-    }
-    
-    div[data-testid="stRadio"] > div[role="radiogroup"] {
-        display: flex; background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 50px; padding: 5px; gap: 5px;
-        width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label {
-        flex: 1; display: flex; justify-content: center; align-items: center;
-        border-radius: 40px; cursor: pointer; transition: all 0.3s ease;
-        margin: 0; height: 50px;
-    }
-
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input { display: none; }
-
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label > div {
-        color: rgba(255, 255, 255, 0.6); font-size: 16px; font-weight: 500;
-    }
-
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input:checked + div {
-        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-        color: white; border-radius: 40px; width: 100%; height: 100%;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 2px 10px rgba(0, 210, 255, 0.3);
-    }
-
-    /* --- PLAYER UI --- */
+    /* --- GLASS CARDS --- */
     .glass-card {
-        background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px);
-        border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); margin-bottom: 25px;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        margin-bottom: 30px;
     }
     
-    .album-art-container {
-        position: relative; width: 220px; height: 220px; margin: 0 auto 25px;
-        display: flex; align-items: center; justify-content: center;
+    /* --- CONTROLS DECK (Stylish Buttons) --- */
+    .controls-deck {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        margin: 30px 0;
+        position: relative;
     }
-    .album-art {
-        width: 100%; height: 100%; border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex; align-items: center; justify-content: center; font-size: 90px;
-        position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        animation: rotate 20s linear infinite;
-    }
-    .album-art.paused { animation-play-state: paused; }
-    .album-glow {
-        position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
-        border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        z-index: 1; filter: blur(20px); opacity: 0.6; animation: pulseGlow 3s ease-in-out infinite;
-    }
-    @keyframes pulseGlow { 0% { transform: scale(0.95); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.7; } 100% { transform: scale(0.95); opacity: 0.5; } }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+    /* The Neumorphic/Glass Buttons */
+    .stButton > button {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        box-shadow: 
+            5px 5px 10px rgba(0, 0, 0, 0.2),
+            -5px -5px 10px rgba(255, 255, 255, 0.05);
+    }
+    
+    .stButton > button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.5), inset 0 0 10px rgba(0, 210, 255, 0.2);
+        border-color: rgba(0, 210, 255, 0.5);
+    }
+
+    /* THE BIG PLAY BUTTON */
+    div:has(> button[key="btn_play"]) > button {
+        width: 90px; height: 90px;
+        font-size: 32px;
+        background: linear-gradient(135deg, #00d2ff, #0072ff);
+        border: none;
+        color: white;
+        position: relative;
+        z-index: 2;
+        
+        /* Double Halo Effect */
+        box-shadow: 
+            0 0 0 6px rgba(255, 255, 255, 0.1),
+            0 0 30px rgba(0, 210, 255, 0.6);
+        animation: pulsePlay 2s infinite ease-in-out;
+    }
+
+    div:has(> button[key="btn_play"]) > button:hover {
+        transform: scale(1.1);
+        box-shadow: 
+            0 0 0 10px rgba(255, 255, 255, 0.2),
+            0 0 50px rgba(0, 210, 255, 0.8);
+    }
+
+    @keyframes pulsePlay {
+        0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+        70% { box-shadow: 0 0 0 20px rgba(0, 210, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
+    }
+
+    /* --- SONG INFO --- */
+    .song-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 28px;
+        background: -webkit-linear-gradient(#fff, #aaa);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* --- VISUALIZER --- */
     .visualizer-container {
-        height: 70px; display: flex; align-items: flex-end; justify-content: center;
-        gap: 4px; margin: 25px 0; padding: 20px; background: rgba(0, 0, 0, 0.15); border-radius: 20px;
+        height: 80px; display: flex; align-items: flex-end; justify-content: center;
+        gap: 5px; margin: 30px 0; padding: 20px; background: rgba(0, 0, 0, 0.2); 
+        border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
     }
     .visualizer-bar {
-        width: 6px; background: linear-gradient(to top, #00d2ff, #3a7bd5);
-        border-radius: 4px; animation: bounce 1s ease-in-out infinite;
+        width: 6px; background: linear-gradient(to top, #00d2ff, #ffffff);
+        border-radius: 3px; animation: bounce 1s ease-in-out infinite;
+        box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
     }
-    .visualizer-container.paused .visualizer-bar { animation-play-state: paused; height: 10px !important; opacity: 0.3; }
+    .visualizer-container.paused .visualizer-bar { animation-play-state: paused; height: 5px !important; opacity: 0.3; }
     @keyframes bounce { 0%, 100% { height: 10px; } 50% { height: var(--bar-height); } }
 
-    .stButton > button {
-        border: none; background: rgba(255,255,255,0.1); color: white;
-        transition: all 0.2s ease; border-radius: 50%; width: 50px; height: 50px;
-        font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    /* --- MODE SELECTOR --- */
+    div[data-testid="stRadio"] { display: flex; justify-content: center; margin-bottom: 30px; }
+    div[data-testid="stRadio"] > div[role="radiogroup"] {
+        display: flex; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px; padding: 5px; gap: 5px; width: 100%; max-width: 400px;
     }
-    .stButton > button:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
-    
-    div:has(> button[key="play"]) > button {
-        width: 70px; height: 70px; font-size: 28px;
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+        flex: 1; border-radius: 8px; cursor: pointer; margin: 0; height: 45px;
+    }
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input { display: none; }
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label > div {
+        color: rgba(255,255,255,0.5); font-weight: 600; font-size: 14px;
+    }
+    div[data-testid="stRadio"] > div[role="radiogroup"] > label > input:checked + div {
         background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-        box-shadow: 0 8px 25px rgba(0, 210, 255, 0.4);
+        color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
-    .stAudio { display: none; }
-
+    /* --- PLAYLIST --- */
     .playlist-item {
-        padding: 15px; margin: 8px 0; background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px; transition: all 0.3s ease; border: 1px solid transparent;
+        padding: 15px; margin: 10px 0; background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px; border: 1px solid transparent; transition: all 0.3s;
+        display: flex; align-items: center; justify-content: space-between;
     }
-    .playlist-item:hover { background: rgba(255, 255, 255, 0.1); }
+    .playlist-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(5px); }
     .playlist-item.active {
-        background: rgba(0, 210, 255, 0.15); border: 1px solid rgba(0, 210, 255, 0.3);
+        background: linear-gradient(90deg, rgba(0, 210, 255, 0.1), rgba(0,0,0,0));
+        border-left: 4px solid #00d2ff;
     }
+    
+    /* Hide ugly audio element */
+    .stAudio { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- START SCREEN (NEW STYLE) ----------------
+# ---------------- INJECT BACKGROUND ORBS ----------------
+# This creates the floating animation effects
+st.markdown("""
+<div class="bg-gradient"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+""", unsafe_allow_html=True)
+
+# ---------------- START SCREEN ----------------
 if not st.session_state.user_interacted:
     c1, c2, c3 = st.columns([1, 2, 1])
-
     with c2:
         st.markdown("""
         <div class="start-screen-container">
             <div class="start-title">SONICSTREAM</div>
-            <p style="opacity: 0.6; margin-bottom: 50px; font-size: 14px; letter-spacing: 1px;">AUDIO ENGINE READY</p>
+            <p style="color: rgba(255,255,255,0.5); font-family: 'Rajdhani'; margin-bottom: 60px; letter-spacing: 2px;">IMMERSIVE AUDIO SYSTEM</p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Changed text to "INITIALIZE SYSTEM"
         if st.button("▶ INITIALIZE SYSTEM", key="start_btn", type="primary"):
             st.session_state.user_interacted = True
             st.rerun()
-    
     st.stop()
 
 # ---------------- HEADER ----------------
 st.markdown("""
-<div class="glass-card" style="text-align: center; padding: 15px;">
-    <h1 style="margin: 0; font-size: 28px; background: -webkit-linear-gradient(#00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SonicStream</h1>
+<div class="glass-card" style="text-align: center; padding: 20px;">
+    <h1 style="margin: 0; font-family: 'Rajdhani'; font-size: 36px; letter-spacing: 2px; color: white;">SonicStream</h1>
 </div>
 """, unsafe_allow_html=True)
 
@@ -234,24 +295,22 @@ mode = st.radio(
 )
 
 # ---------------- LOAD LOGIC ----------------
+uploaded_files = None 
+
 if mode == "📤 Upload":
     st.markdown("""
-    <div style="text-align: center; padding: 30px; border: 2px dashed rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 20px;">
-        <span style="font-size: 40px;">📂</span>
-        <p style="margin: 10px 0 0 0; opacity: 0.7;">Drag & Drop Files Here</p>
+    <div style="text-align: center; padding: 40px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 20px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
+        <span style="font-size: 40px; filter: drop-shadow(0 0 10px rgba(0,210,255,0.5));">📂</span>
+        <p style="margin: 15px 0 0 0; opacity: 0.6; letter-spacing: 1px;">UPLOAD YOUR TRACKS</p>
     </div>
     """, unsafe_allow_html=True)
     
-    uploaded_files = st.file_uploader("", type=["wav", "mp3", "ogg"], accept_multiple_files=True, label_visibility="collapsed")
-
+    uploaded_files = st.file_uploader(
+        "", type=["wav", "mp3", "ogg"], accept_multiple_files=True, label_visibility="collapsed", key="file_uploader_state"
+    )
     if uploaded_files:
-        st.session_state.playlist = []
-        for f in uploaded_files:
-            st.session_state.playlist.append({
-                "name": f.name,
-                "bytes": f.read(),
-                "format": f.type
-            })
+        st.session_state.playlist = [{"name": f.name} for f in uploaded_files]
+        
 else:
     music_folder = "music"
     if not os.path.isdir(music_folder):
@@ -259,104 +318,122 @@ else:
     else:
         files = [f for f in os.listdir(music_folder) if f.lower().endswith((".wav", ".mp3"))]
         if files:
-            st.session_state.playlist = []
-            for f in files:
-                path = os.path.join(music_folder, f)
-                with open(path, "rb") as audio:
-                    st.session_state.playlist.append({
-                        "name": f,
-                        "bytes": audio.read(),
-                        "format": f"audio/{f.split('.')[-1].lower()}"
-                    })
+            st.session_state.playlist = [{"name": f} for f in files]
 
 # ---------------- PLAYER UI ----------------
 if st.session_state.playlist:
-    current_song = st.session_state.playlist[st.session_state.current_song_index]
+    current_song_info = st.session_state.playlist[st.session_state.current_song_index]
+    song_name = current_song_info["name"]
     
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    # Dynamic Audio Loading
+    audio_data = None
+    audio_format = "audio/mp3"
     
-    # Album Art
-    art_state = "" if st.session_state.is_playing else "paused"
-    st.markdown(f"""
-    <div class="album-art-container">
-        <div class="album-glow"></div>
-        <div class="album-art {art_state}">🎵</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Song Info
-    st.markdown(f"""
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="font-size: 22px; margin: 0; word-break: break-all;">{current_song['name']}</h2>
-        <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 14px;">
-            {'Now Playing' if st.session_state.is_playing else 'Paused'}
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Visualizer
-    vis_state = "" if st.session_state.is_playing else "paused"
-    bars = "".join([
-        f'<div class="visualizer-bar" style="--bar-height: {random.randint(15, 60)}px; animation-duration: {random.uniform(0.8, 1.2)}s; animation-delay: {random.uniform(0, 0.5)}s"></div>' 
-        for i in range(25)
-    ])
-    st.markdown(f"""
-    <div class="visualizer-container {vis_state}">
-        {bars}
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Controls
-    c1, c2, c3, c4, c5 = st.columns([1, 1, 1.5, 1, 1])
-    
-    with c1:
-        if st.button("⏮", key="prev"):
-            st.session_state.current_song_index = (st.session_state.current_song_index - 1) % len(st.session_state.playlist)
-            st.session_state.is_playing = True
-            st.rerun()
-    with c2:
-        if st.button("🔀", key="shuffle"):
-            st.session_state.shuffle = not st.session_state.shuffle
-            st.rerun()
-    with c3:
-        play_icon = "⏸" if st.session_state.is_playing else "▶"
-        if st.button(play_icon, key="play", use_container_width=True):
-            st.session_state.is_playing = not st.session_state.is_playing
-            st.rerun()
-    with c4:
-        if st.button("🔁", key="repeat"):
-            st.session_state.repeat = not st.session_state.repeat
-            st.rerun()
-    with c5:
-        if st.button("⏭", key="next"):
-            st.session_state.current_song_index = (st.session_state.current_song_index + 1) % len(st.session_state.playlist)
-            st.session_state.is_playing = True
-            st.rerun()
-            
-    # Volume
-    vol = st.slider("Volume", 0.0, 1.0, st.session_state.volume, label_visibility="collapsed")
-    st.session_state.volume = vol
-    
-    # Audio Logic
-    if st.session_state.is_playing:
-        st.audio(current_song["bytes"], format=current_song["format"], start_time=st.session_state.start_time, autoplay=True)
+    if mode == "📤 Upload":
+        if uploaded_files:
+            target_file = next((f for f in uploaded_files if f.name == song_name), None)
+            if target_file:
+                audio_data = target_file.read()
+                audio_format = target_file.type
     else:
-        st.audio(current_song["bytes"], format=current_song["format"], start_time=st.session_state.start_time, autoplay=False)
+        music_folder = "music"
+        path = os.path.join(music_folder, song_name)
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                audio_data = f.read()
+                audio_format = f"audio/{song_name.split('.')[-1].lower()}"
     
-    st.markdown('</div>', unsafe_allow_html=True)
+    if not audio_data:
+        st.error(f"Could not load audio for: {song_name}")
+    else:
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        
+        # Album Art (Styled)
+        art_state = "" if st.session_state.is_playing else "paused"
+        st.markdown(f"""
+        <div style="position: relative; width: 260px; height: 260px; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
+            <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, #764ba2, transparent); opacity: 0.5; filter: blur(30px);"></div>
+            <div style="position: relative; z-index: 2; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #1e1e2f, #0f0c29); display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); animation: rotate 30s linear infinite;" class="album-art {art_state}">
+                🎵
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Song Info (Styled)
+        st.markdown(f"""
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div class="song-title">{song_name}</div>
+            <p style="margin: 5px 0 0 0; opacity: 0.6; font-family: 'Rajdhani'; font-size: 16px; letter-spacing: 1px;">
+                {'NOW PLAYING' if st.session_state.is_playing else 'PAUSED'}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Visualizer (Styled)
+        vis_state = "" if st.session_state.is_playing else "paused"
+        bars = "".join([
+            f'<div class="visualizer-bar" style="--bar-height: {random.randint(20, 80)}px; animation-duration: {random.uniform(0.8, 1.5)}s; animation-delay: {random.uniform(0, 0.5)}s"></div>' 
+            for i in range(30)
+        ])
+        st.markdown(f"""
+        <div class="visualizer-container {vis_state}">
+            {bars}
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Controls (Stylish Deck)
+        c1, c2, c3, c4, c5 = st.columns([1, 1, 1.5, 1, 1])
+        
+        with c1:
+            if st.button("⏮", key="btn_prev"):
+                st.session_state.current_song_index = (st.session_state.current_song_index - 1) % len(st.session_state.playlist)
+                st.session_state.is_playing = True
+                st.rerun()
+        with c2:
+            if st.button("🔀", key="btn_shuffle"):
+                st.session_state.shuffle = not st.session_state.shuffle
+                if st.session_state.shuffle:
+                    random.shuffle(st.session_state.playlist)
+                    st.session_state.current_song_index = 0
+                st.rerun()
+        with c3:
+            play_icon = "⏸" if st.session_state.is_playing else "▶"
+            if st.button(play_icon, key="btn_play", use_container_width=True):
+                st.session_state.is_playing = not st.session_state.is_playing
+                st.rerun()
+        with c4:
+            if st.button("🔁", key="btn_repeat"):
+                st.session_state.repeat = not st.session_state.repeat
+                st.rerun()
+        with c5:
+            if st.button("⏭", key="btn_next"):
+                st.session_state.current_song_index = (st.session_state.current_song_index + 1) % len(st.session_state.playlist)
+                st.session_state.is_playing = True
+                st.rerun()
+                
+        # Volume
+        vol = st.slider("Volume", 0.0, 1.0, st.session_state.volume, label_visibility="collapsed")
+        st.session_state.volume = vol
+        
+        # Audio Logic
+        if st.session_state.is_playing:
+            st.audio(audio_data, format=audio_format, start_time=st.session_state.start_time, autoplay=True)
+        else:
+            st.audio(audio_data, format=audio_format, start_time=st.session_state.start_time, autoplay=False)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Playlist
-    st.markdown('<div class="glass-card playlist-section">', unsafe_allow_html=True)
-    st.markdown('<h3 style="margin-top:0;">📋 Playlist</h3>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.markdown('<h3 style="margin:0 0 20px 0; font-family: Rajdhani; font-size: 22px; color: rgba(255,255,255,0.8);">UP NEXT</h3>', unsafe_allow_html=True)
     
     for i, song in enumerate(st.session_state.playlist):
         active = "active" if i == st.session_state.current_song_index else ""
-        icon = "▶" if active else "🎵"
         col_song, col_btn = st.columns([5, 1])
         with col_song:
-            st.markdown(f'<div class="playlist-item {active}">{icon} {song["name"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="playlist-item {active}"><span style="font-size: 12px; opacity: 0.5; margin-right: 15px; font-family: Rajdhani;">{str(i+1).zfill(2)}</span> {song["name"]}</div>', unsafe_allow_html=True)
         with col_btn:
-            if st.button("▶", key=f"play_{i}"):
+            if st.button("▶", key=f"btn_play_list_{i}"):
                 st.session_state.current_song_index = i
                 st.session_state.is_playing = True
                 st.rerun()
@@ -365,8 +442,8 @@ if st.session_state.playlist:
 
 else:
     st.markdown("""
-    <div class="glass-card" style="text-align: center; padding: 50px;">
-        <h2 style="opacity: 0.5;">No Music Loaded</h2>
-        <p style="opacity: 0.3;">Please upload files or select a folder.</p>
+    <div class="glass-card" style="text-align: center; padding: 60px;">
+        <h2 style="opacity: 0.5; font-family: Rajdhani;">NO AUDIO SOURCE</h2>
+        <p style="opacity: 0.3;">Select files or folder to begin playback.</p>
     </div>
     """, unsafe_allow_html=True)
