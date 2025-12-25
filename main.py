@@ -28,6 +28,10 @@ if 'repeat' not in st.session_state:
     st.session_state.repeat = False
 if 'start_time' not in st.session_state:
     st.session_state.start_time = 0
+if 'mobile_detected' not in st.session_state:
+    st.session_state.mobile_detected = False
+if 'user_interacted' not in st.session_state:
+    st.session_state.user_interacted = False
 
 # ---------------- Custom CSS ----------------
 st.markdown("""
@@ -41,22 +45,26 @@ st.markdown("""
     body {
         background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
         min-height: 100vh;
+        margin: 0;
+        padding: 0;
     }
     
     .main-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .player-header {
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         animation: fadeInDown 1s ease;
     }
     
     .player-header h1 {
-        font-size: 48px;
+        font-size: 36px;
         font-weight: 700;
         background: linear-gradient(45deg, #00d2ff, #3a7bd5, #00d2ff);
         background-size: 200% 200%;
@@ -88,9 +96,10 @@ st.markdown("""
         backdrop-filter: blur(10px);
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 30px;
+        padding: 20px;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         transition: all 0.3s ease;
+        margin-bottom: 20px;
     }
     
     .glass-card:hover {
@@ -99,15 +108,15 @@ st.markdown("""
     }
     
     .album-art {
-        width: 250px;
-        height: 250px;
-        margin: 0 auto 30px;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 20px;
         border-radius: 20px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 100px;
+        font-size: 80px;
         position: relative;
         overflow: hidden;
         animation: rotate 20s linear infinite;
@@ -141,35 +150,36 @@ st.markdown("""
     
     .song-info {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
     
     .song-title {
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 600;
         color: white;
         margin-bottom: 10px;
+        word-wrap: break-word;
     }
     
     .song-artist {
-        font-size: 18px;
+        font-size: 16px;
         color: rgba(255, 255, 255, 0.7);
     }
     
     .visualizer-container {
-        height: 80px;
+        height: 60px;
         display: flex;
         align-items: flex-end;
         justify-content: center;
-        gap: 4px;
-        margin: 30px 0;
-        padding: 20px;
+        gap: 3px;
+        margin: 20px 0;
+        padding: 15px;
         background: rgba(0, 0, 0, 0.2);
         border-radius: 15px;
     }
     
     .visualizer-bar {
-        width: 6px;
+        width: 5px;
         background: linear-gradient(to top, #00d2ff, #3a7bd5);
         border-radius: 3px;
         animation: wave 1s ease-in-out infinite;
@@ -187,7 +197,7 @@ st.markdown("""
     }
     
     .progress-section {
-        margin: 30px 0;
+        margin: 20px 0;
     }
     
     .progress-bar {
@@ -233,8 +243,8 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 20px;
-        margin: 30px 0;
+        gap: 15px;
+        margin: 20px 0;
     }
     
     .control-btn {
@@ -258,8 +268,8 @@ st.markdown("""
     }
     
     .control-btn.play-pause {
-        width: 70px;
-        height: 70px;
+        width: 60px;
+        height: 60px;
         background: linear-gradient(135deg, #00d2ff, #3a7bd5);
         font-size: 24px;
         box-shadow: 0 5px 20px rgba(0, 210, 255, 0.4);
@@ -274,7 +284,7 @@ st.markdown("""
         align-items: center;
         gap: 15px;
         margin: 20px 0;
-        padding: 20px;
+        padding: 15px;
         background: rgba(0, 0, 0, 0.2);
         border-radius: 15px;
     }
@@ -299,24 +309,24 @@ st.markdown("""
     }
     
     .playlist-section {
-        margin-top: 30px;
-        max-height: 300px;
+        margin-top: 20px;
+        max-height: 250px;
         overflow-y: auto;
     }
     
     .playlist-header {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 600;
         color: white;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         display: flex;
         align-items: center;
         gap: 10px;
     }
     
     .playlist-item {
-        padding: 15px;
-        margin: 10px 0;
+        padding: 12px;
+        margin: 8px 0;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 10px;
         cursor: pointer;
@@ -356,7 +366,7 @@ st.markdown("""
     .upload-section {
         border: 2px dashed rgba(0, 210, 255, 0.3);
         border-radius: 15px;
-        padding: 40px;
+        padding: 30px;
         text-align: center;
         margin: 20px 0;
         background: rgba(0, 210, 255, 0.05);
@@ -397,18 +407,19 @@ st.markdown("""
     .status-bar {
         display: flex;
         justify-content: center;
-        gap: 20px;
+        gap: 15px;
         margin: 20px 0;
-        padding: 15px;
+        padding: 12px;
         background: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
+        flex-wrap: wrap;
     }
     
     .status-item {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 15px;
+        padding: 8px 12px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 20px;
         font-size: 14px;
@@ -423,14 +434,40 @@ st.markdown("""
     
     .empty-state {
         text-align: center;
-        padding: 60px;
+        padding: 40px;
         color: rgba(255, 255, 255, 0.6);
     }
     
     .empty-state-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
+        font-size: 60px;
+        margin-bottom: 15px;
         opacity: 0.5;
+    }
+    
+    /* Mobile audio fix */
+    .mobile-audio-container {
+        position: relative;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .mobile-play-btn {
+        display: none;
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-play-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
     }
     
     /* Scrollbar styling */
@@ -462,6 +499,151 @@ st.markdown("""
         position: relative;
         width: 100%;
     }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-container {
+            padding: 10px;
+        }
+        
+        .player-header h1 {
+            font-size: 28px;
+        }
+        
+        .album-art {
+            width: 150px;
+            height: 150px;
+            font-size: 60px;
+        }
+        
+        .song-title {
+            font-size: 18px;
+        }
+        
+        .song-artist {
+            font-size: 14px;
+        }
+        
+        .visualizer-container {
+            height: 40px;
+            padding: 10px;
+        }
+        
+        .visualizer-bar {
+            width: 3px;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+        }
+        
+        .control-btn.play-pause {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+        
+        .controls {
+            gap: 10px;
+        }
+        
+        .status-bar {
+            gap: 10px;
+        }
+        
+        .status-item {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+        
+        .mobile-play-btn {
+            display: block;
+        }
+        
+        .playlist-section {
+            max-height: 200px;
+        }
+        
+        .playlist-item {
+            padding: 10px;
+        }
+        
+        .upload-section {
+            padding: 20px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .player-header h1 {
+            font-size: 24px;
+        }
+        
+        .album-art {
+            width: 120px;
+            height: 120px;
+            font-size: 50px;
+        }
+        
+        .song-title {
+            font-size: 16px;
+        }
+        
+        .song-artist {
+            font-size: 12px;
+        }
+        
+        .visualizer-container {
+            height: 30px;
+            padding: 8px;
+        }
+        
+        .visualizer-bar {
+            width: 2px;
+        }
+        
+        .control-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 12px;
+        }
+        
+        .control-btn.play-pause {
+            width: 45px;
+            height: 45px;
+            font-size: 18px;
+        }
+        
+        .controls {
+            gap: 8px;
+        }
+        
+        .status-bar {
+            gap: 8px;
+        }
+        
+        .status-item {
+            padding: 5px 8px;
+            font-size: 11px;
+        }
+        
+        .volume-control {
+            padding: 10px;
+        }
+        
+        .playlist-section {
+            max-height: 150px;
+        }
+        
+        .playlist-item {
+            padding: 8px;
+        }
+        
+        .upload-section {
+            padding: 15px;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -469,7 +651,7 @@ st.markdown("""
 st.markdown("""
 <div class="main-container">
     <div class="player-header">
-        <h1>🎵  Music Player</h1>
+        <h1>🎵 Advanced Music Player</h1>
         <p style="color: rgba(255,255,255,0.7); margin-top: 10px;">Immersive Audio Experience</p>
     </div>
 """, unsafe_allow_html=True)
@@ -567,7 +749,7 @@ if st.session_state.playlist:
     visualizer_class = "" if st.session_state.is_playing else "paused"
     bars = "".join([
         f'<div class="visualizer-bar" style="--bar-height: {random.randint(20, 70)}px; animation-delay: {i*0.05}s"></div>' 
-        for i in range(40)
+        for i in range(30)  # Reduced bars for mobile
     ])
     st.markdown(f"""
     <div class="visualizer-container {visualizer_class}">
@@ -596,6 +778,7 @@ if st.session_state.playlist:
             st.session_state.current_song_index = (st.session_state.current_song_index - 1) % len(st.session_state.playlist)
             st.session_state.is_playing = True
             st.session_state.start_time = 0
+            st.session_state.user_interacted = True
             st.rerun()
     
     with col2:
@@ -610,6 +793,7 @@ if st.session_state.playlist:
         play_icon = "⏸" if st.session_state.is_playing else "▶"
         if st.button(play_icon, key="btn_play", use_container_width=True):
             st.session_state.is_playing = not st.session_state.is_playing
+            st.session_state.user_interacted = True
             if st.session_state.is_playing:
                 st.session_state.start_time = 0
             st.rerun()
@@ -624,6 +808,7 @@ if st.session_state.playlist:
             st.session_state.current_song_index = (st.session_state.current_song_index + 1) % len(st.session_state.playlist)
             st.session_state.is_playing = True
             st.session_state.start_time = 0
+            st.session_state.user_interacted = True
             st.rerun()
     
     # Volume Control
@@ -640,13 +825,77 @@ if st.session_state.playlist:
     with col3:
         st.write("")
     
-    # Audio Player
+    # Mobile Audio Fix
+    st.markdown('<div class="mobile-audio-container">', unsafe_allow_html=True)
+    
+    # Create a base64 encoded version of the audio for mobile compatibility
+    audio_data = current_song["bytes"]
+    b64 = base64.b64encode(audio_data).decode()
+    
+    # Custom HTML5 audio player for mobile
+    st.markdown(f"""
+    <audio id="audio-player" controls style="width: 100%; margin-top: 10px;">
+        <source src="data:audio/mp3;base64,{b64}" type="audio/mpeg">
+        <source src="data:audio/wav;base64,{b64}" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    """, unsafe_allow_html=True)
+    
+    # JavaScript to handle mobile audio playback
+    st.markdown("""
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const audio = document.getElementById('audio-player');
+        const playBtn = document.querySelector('[data-testid="stButton"]'); // This might need adjustment
+        
+        // Function to play audio
+        function playAudio() {
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Autoplay started
+                    console.log('Audio playing');
+                }).catch(error => {
+                    // Autoplay was prevented
+                    console.log('Autoplay prevented:', error);
+                });
+            }
+        }
+        
+        // Check if it's a mobile device
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // Show custom play button for mobile
+            const mobilePlayBtn = document.createElement('button');
+            mobilePlayBtn.textContent = '▶ Play Audio';
+            mobilePlayBtn.className = 'mobile-play-btn';
+            
+            mobilePlayBtn.addEventListener('click', function() {
+                playAudio();
+            });
+            
+            // Insert the button after the audio element
+            audio.parentNode.insertBefore(mobilePlayBtn, audio.nextSibling);
+        }
+        
+        // Try to play audio when user interacts with the page
+        document.addEventListener('click', function() {
+            if (audio.paused) {
+                playAudio();
+            }
+        }, { once: true });
+    });
+    </script>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Regular Streamlit audio element for desktop
     st.markdown('<div class="custom-audio-container">', unsafe_allow_html=True)
     
-    # Use a unique identifier in the data to force re-render
-    audio_data = current_song["bytes"]
-    
-    if st.session_state.is_playing:
+    if st.session_state.is_playing and st.session_state.user_interacted:
         # When playing, show audio with autoplay
         st.audio(
             audio_data,
@@ -700,6 +949,7 @@ if st.session_state.playlist:
             st.session_state.current_song_index = i
             st.session_state.is_playing = True
             st.session_state.start_time = 0
+            st.session_state.user_interacted = True
             st.rerun()
     
     st.markdown('</div>', unsafe_allow_html=True)
@@ -714,4 +964,3 @@ else:
     """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
-
