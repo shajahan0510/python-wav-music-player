@@ -469,7 +469,7 @@ st.markdown("""
 st.markdown("""
 <div class="main-container">
     <div class="player-header">
-        <h1>🎵 Advanced Music Player</h1>
+        <h1>🎵  Music Player</h1>
         <p style="color: rgba(255,255,255,0.7); margin-top: 10px;">Immersive Audio Experience</p>
     </div>
 """, unsafe_allow_html=True)
@@ -714,3 +714,4 @@ else:
     """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
